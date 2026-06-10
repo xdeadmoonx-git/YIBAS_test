@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>УИБАС — тренажёр к зачёту</title>
+<title>Угрозы ИБ АС — тренажёр к зачёту</title>
 <style>
 :root{
   --ink:#11181f;
@@ -112,6 +112,20 @@ main{max-width:860px;margin:18px auto 60px;padding:0 18px}
   background:#1b242e;border:1px dashed #3a4450;padding:40px 20px;text-align:center;color:#9a958a;font-style:italic;
 }
 
+
+/* ---------- exam mode ---------- */
+.ex-badge{display:inline-block;font-family:ui-monospace,'Courier New',monospace;font-size:11px;letter-spacing:.14em;padding:3px 10px;border:1.5px solid var(--seal);color:var(--seal);margin-bottom:10px;text-transform:uppercase;transform:rotate(-.8deg)}
+.timerbar{height:5px;background:#d8d3c4;margin:14px 0 0}
+.timerbar i{display:block;height:100%;background:var(--stamp);width:100%;transition:width .1s linear}
+.ex-start{background:var(--paper);color:var(--ink);padding:30px;border-left:6px solid var(--stamp)}
+.ex-start h2{font-size:22px;margin-bottom:8px}
+.ex-start p{font-size:14px;color:#4a463a;line-height:1.5;margin-bottom:18px}
+.ex-start .row{display:flex;gap:10px;flex-wrap:wrap}
+.ex-start .row button{font-family:ui-monospace,'Courier New',monospace;font-size:13px;padding:12px 18px;cursor:pointer;border:1.5px solid var(--ink);background:transparent;color:var(--ink)}
+.ex-start .row button.primary{background:var(--ink);color:var(--paper)}
+.ex-start .row button.toggled{background:var(--stamp);border-color:var(--stamp);color:#fff}
+.streakfire{color:#e8a13a;font-weight:bold}
+
 /* ---------- quiz / blanks ---------- */
 .qz-question{background:var(--paper);color:var(--ink);padding:22px;border-left:6px solid var(--stamp)}
 .qz-question .qnum{font-family:ui-monospace,'Courier New',monospace;font-size:11px;color:var(--stamp);letter-spacing:.15em;margin-bottom:10px}
@@ -168,12 +182,13 @@ footer{max-width:860px;margin:0 auto;padding:0 18px 40px;font-family:ui-monospac
 <body>
 <header>
   <div class="doc-label">Для подготовки к зачёту</div>
-  <h1>Управление ИБ автоматизированных систем — <b>тренажёр</b></h1>
+  <h1>Угрозы ИБ автоматизированных систем — <b>тренажёр</b></h1>
   <div class="sub">60 вопросов · Методика ФСТЭК 05.02.2021 · ГОСТ Р 50922, 51583, 51624, 53113.1 · 149-ФЗ, 152-ФЗ, 187-ФЗ</div>
 </header>
 <nav id="nav">
   <button data-p="fc" class="active">Карточки</button>
   <button data-p="qz">Тест</button>
+  <button data-p="ex">Зачёт</button>
   <button data-p="mt">Термины</button>
   <button data-p="bl">Пропуски</button>
   <button data-p="dp">Дополнительно</button>
@@ -197,6 +212,7 @@ footer{max-width:860px;margin:0 auto;padding:0 18px 40px;font-family:ui-monospac
   </section>
 
   <section class="panel" id="p-qz"><div id="qz-wrap"></div></section>
+  <section class="panel" id="p-ex"><div id="ex-wrap"></div></section>
   <section class="panel" id="p-mt">
     <div class="mt-head"><span id="mt-status"></span><button id="mt-next">Новый раунд</button></div>
     <div class="mt-grid"><div class="mt-col" id="mt-terms"></div><div class="mt-col" id="mt-defs"></div></div>
@@ -378,6 +394,38 @@ const DPQUIZ=[
 {q:"Требования по обеспечению безопасности самих значимых объектов КИИ — приказ ФСТЭК №:",o:["239","235","127","76"],c:0}
 ];
 
+
+const TF=[
+{s:"Для средств ТЗИ установлено шесть уровней доверия.",v:true},
+{s:"Самый высокий уровень доверия — шестой.",v:false},
+{s:"Н4 — это нарушитель с базовыми возможностями.",v:false},
+{s:"Для одной системы могут быть актуальны нарушители разных уровней возможностей.",v:true},
+{s:"Скрытый канал по времени работает даже через криптографически защищённый канал связи.",v:true},
+{s:"Скрытый статистический канал основан на общем разделяемом ресурсе памяти.",v:false},
+{s:"Методика оценки угроз ФСТЭК утверждена 5 февраля 2021 года.",v:true},
+{s:"Угроза признаётся актуальной только при наличии минимум трёх сценариев реализации.",v:false},
+{s:"Внешний нарушитель обладает правами доступа к системе.",v:false},
+{s:"Обладателем информации может быть муниципальное образование.",v:true},
+{s:"Меры защиты для ИСПДн определяются приказом ФСТЭК № 21.",v:true},
+{s:"Меры защиты для значимых объектов КИИ определяются приказом ФСТЭК № 21.",v:false},
+{s:"Объекты КИИ — это информационные системы, ИТКС и АСУ субъектов КИИ.",v:true},
+{s:"Источником угрозы может быть только человек.",v:false},
+{s:"Стихийное бедствие может являться источником угрозы безопасности информации.",v:true},
+{s:"ГОСТ Р 53113.1-2008 посвящён скрытым каналам передачи информации.",v:true},
+{s:"Одна модель угроз допускается для систем с одинаковыми целями и схожей архитектурой.",v:true},
+{s:"Без оценки угроз инфраструктуры ЦОД размещение системы допускается сроком на один год.",v:false},
+{s:"Оценку угроз могут проводить сторонние организации с лицензией на ТЗКИ.",v:true},
+{s:"Сценарий реализации угрозы — это последовательность тактик и техник.",v:true},
+{s:"Первый этап оценки угроз — анализ уязвимостей.",v:false},
+{s:"Иностранные СЗИ, на которые установлены запреты, сертифицируются в упрощённом порядке.",v:false},
+{s:"Бывшие (уволенные) работники рассматриваются как возможные нарушители.",v:true},
+{s:"Уязвимость — это всегда ошибка действий пользователя.",v:false},
+{s:"Авторизованный пользователь не может быть нарушителем, так как имеет легальный доступ.",v:false},
+{s:"Модель угроз должна включать раздел с возможными негативными последствиями.",v:true},
+{s:"Перехват информации из каналов связи — один из основных способов реализации угроз.",v:true},
+{s:"Граница оценки угроз включает только серверы с защищаемой информацией.",v:false}
+];
+
 /* ================= state & storage ================= */
 let known=new Set(), again=new Set();
 async function loadState(){
@@ -401,6 +449,8 @@ document.getElementById('nav').addEventListener('click',e=>{
   if(b.dataset.p==='qz'&&!qzStarted)startQuiz();
   if(b.dataset.p==='mt'&&!mtStarted)newMatchRound();
   if(b.dataset.p==='bl'&&!blStarted)startBlanks();
+  if(b.dataset.p==='ex'&&!exStarted)renderExamStart();
+  if(b.dataset.p!=='ex')stopExTimer&&stopExTimer();
 });
 
 /* ================= flashcards ================= */
@@ -583,6 +633,99 @@ function renderDpQuiz(){
   document.getElementById('dp-next').addEventListener('click',()=>{dpPos++;renderDpQuiz();});
 }
 document.getElementById('dp-start').addEventListener('click',startDpQuiz);
+
+
+/* ================= exam gauntlet ================= */
+let exStarted=false,exTasks=[],exPos=0,exScore=0,exStreak=0,exBest=0,exInt=null,exTimed=true;
+const EX_TIME=25;
+const CHEERS=['Серия!','В огне!','ФСТЭК одобряет','Машина!','Не остановить'];
+const clip=(s,m)=>s.length>m?s.slice(0,m-1)+'…':s;
+
+function genQuizTask(item){return{label:'Классика',q:item.q,opts:shuffle(item.o.map((t,i)=>({t,ok:i===item.c})))};}
+function genBlankTask(item){return{label:'Заполни пропуск',q:item.s.replace('___','______'),opts:shuffle(item.o.map(t=>({t,ok:t===item.c})))};}
+function genTFTask(item){return{label:'Правда или ложь',q:item.s,opts:[{t:'Правда',ok:item.v},{t:'Ложь',ok:!item.v}]};}
+function genQATask(){
+  const pool=shuffle(QUESTIONS);const q=pool[0];
+  const same=pool.slice(1).filter(x=>x.t===q.t);
+  const rest=pool.slice(1).filter(x=>x.t!==q.t);
+  const dist=same.concat(rest).slice(0,3);
+  return{label:'Найди верный тезис',q:q.q,opts:shuffle([{t:clip(q.a[0],170),ok:true},...dist.map(o=>({t:clip(o.a[0],170),ok:false}))])};
+}
+function genAQTask(){
+  const pool=shuffle(QUESTIONS);const q=pool[0];
+  const bullet=q.a[Math.floor(Math.random()*q.a.length)];
+  return{label:'Чей это тезис?',q:'«'+clip(bullet,190)+'»',opts:shuffle([{t:q.q,ok:true},...pool.slice(1,4).map(o=>({t:o.q,ok:false}))])};
+}
+function genTermTask(){
+  const pool=shuffle(TERMS);
+  return{label:'Термин',q:'Что означает: «'+pool[0][0]+'»?',opts:shuffle([{t:pool[0][1],ok:true},...pool.slice(1,4).map(p=>({t:p[1],ok:false}))])};
+}
+
+function buildExam(n){
+  const quizPool=shuffle(QUIZ),blankPool=shuffle(BLANKS),tfPool=shuffle(TF);
+  const types=[];
+  const base=['quiz','blank','tf','qa','aq','term'];
+  while(types.length<n)types.push(...shuffle(base));
+  exTasks=shuffle(types.slice(0,n)).map(t=>{
+    if(t==='quiz'&&quizPool.length)return genQuizTask(quizPool.pop());
+    if(t==='blank'&&blankPool.length)return genBlankTask(blankPool.pop());
+    if(t==='tf'&&tfPool.length)return genTFTask(tfPool.pop());
+    if(t==='aq')return genAQTask();
+    if(t==='term')return genTermTask();
+    return genQATask();
+  });
+}
+function renderExamStart(){
+  exStarted=true;
+  document.getElementById('ex-wrap').innerHTML=
+    '<div class="ex-start"><h2>Режим «Зачёт»</h2>'
+    +'<p>Случайная смесь из шести типов заданий: классические вопросы, пропуски, «правда/ложь», поиск верного тезиса, угадывание вопроса по ответу и термины. Какой тип выпадет следующим — неизвестно. '+(exTimed?'На каждое задание — '+EX_TIME+' секунд.':'Таймер выключен.')+'</p>'
+    +'<div class="row"><button class="primary" data-n="10">Короткий · 10</button><button class="primary" data-n="20">Стандарт · 20</button><button class="primary" data-n="40">Марафон · 40</button><button id="ex-timed"'+(exTimed?' class="toggled"':'')+'>'+(exTimed?'⏱ Таймер вкл':'⏱ Таймер выкл')+'</button></div></div>';
+  document.querySelectorAll('#ex-wrap .row button[data-n]').forEach(b=>b.addEventListener('click',()=>{
+    buildExam(+b.dataset.n);exPos=0;exScore=0;exStreak=0;exBest=0;renderExamTask();
+  }));
+  document.getElementById('ex-timed').addEventListener('click',()=>{exTimed=!exTimed;renderExamStart();});
+}
+function stopExTimer(){if(exInt){clearInterval(exInt);exInt=null;}}
+function renderExamTask(){
+  stopExTimer();
+  const w=document.getElementById('ex-wrap');
+  if(exPos>=exTasks.length){
+    const pct=Math.round(exScore/exTasks.length*100);
+    let v='НА ПЕРЕСДАЧУ';if(pct>=85)v='ЗАЧТЕНО С ОТЛИЧИЕМ';else if(pct>=65)v='ЗАЧТЕНО';else if(pct>=45)v='ПОЧТИ ЗАЧТЕНО';
+    w.innerHTML='<div class="qz-result"><div class="big">'+exScore+' / '+exTasks.length+'</div><div class="verdict">'+v+' · лучшая серия: '+exBest+'</div><button id="ex-restart">Новый зачёт</button></div>';
+    document.getElementById('ex-restart').addEventListener('click',renderExamStart);
+    return;
+  }
+  const t=exTasks[exPos];
+  w.innerHTML='<div class="qz-question" style="border-left-color:var(--seal)">'
+    +'<div class="ex-badge">'+t.label+'</div>'
+    +'<div class="qnum">Задание '+(exPos+1)+' из '+exTasks.length+'</div><p>'+esc(t.q)+'</p>'
+    +(exTimed?'<div class="timerbar"><i id="ex-timer"></i></div>':'')+'</div>'
+    +'<div class="qz-opts" id="ex-opts">'+t.opts.map((o,i)=>'<button data-i="'+i+'">'+esc(o.t)+'</button>').join('')+'</div>'
+    +'<div class="qz-foot"><span id="ex-score">Счёт: '+exScore+(exStreak>=3?' · <span class="streakfire">🔥'+exStreak+' '+CHEERS[Math.min(exStreak-3,CHEERS.length-1)]+'</span>':'')+'</span><button id="ex-next">Дальше →</button></div>';
+
+  const finish=(pickedIdx)=>{
+    stopExTimer();
+    document.querySelectorAll('#ex-opts button').forEach((x,xi)=>{x.disabled=true;if(t.opts[xi].ok)x.classList.add('correct');});
+    if(pickedIdx!==null&&t.opts[pickedIdx].ok){exScore++;exStreak++;exBest=Math.max(exBest,exStreak);}
+    else{exStreak=0;if(pickedIdx!==null)document.querySelectorAll('#ex-opts button')[pickedIdx].classList.add('wrong');}
+    document.getElementById('ex-score').innerHTML='Счёт: '+exScore+(exStreak>=3?' · <span class="streakfire">🔥'+exStreak+' '+CHEERS[Math.min(exStreak-3,CHEERS.length-1)]+'</span>':'');
+    document.getElementById('ex-next').style.display='inline-block';
+  };
+  document.getElementById('ex-opts').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b||b.disabled)return;finish(+b.dataset.i);
+  });
+  document.getElementById('ex-next').addEventListener('click',()=>{exPos++;renderExamTask();});
+  if(exTimed){
+    let left=EX_TIME*10;
+    exInt=setInterval(()=>{
+      left--;const bar=document.getElementById('ex-timer');
+      if(bar)bar.style.width=(left/(EX_TIME*10)*100)+'%';
+      if(left<=0)finish(null);
+    },100);
+  }
+}
 
 /* ================= list / cheat sheet ================= */
 function renderList(filter){
